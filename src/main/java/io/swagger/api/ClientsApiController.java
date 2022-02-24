@@ -10,14 +10,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.util.List;
+import java.net.URI;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2022-02-16T12:44:13.813Z")
 
@@ -26,50 +28,50 @@ public class ClientsApiController implements ClientsApi {
 
     private static final Logger log = LoggerFactory.getLogger(ClientsApiController.class);
 
-    private final ObjectMapper objectMapper;
-
-    private final HttpServletRequest request;
-
     private ClientDAO clientDAO;
 
     @org.springframework.beans.factory.annotation.Autowired
     public ClientsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
         this.clientDAO = new ClientDAO();
     }
 
     public ResponseEntity<Client> create(@ApiParam(value = "", required = true) @Valid @RequestBody Client client) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Client>(objectMapper.readValue("{\"empty\": false}", Client.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Client>(HttpStatus.INTERNAL_SERVER_ERROR);
+        ResponseEntity<Client> responseEntity = null;
+
+        try {
+            if (client != null) {
+                Client newClient = clientDAO.save(client);
+
+                if (newClient == null) {
+                    throw new RuntimeException("Erro ao tentar cadastrar novo cliente.");
+                }
+
+                URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newClient.getId()).toUri();
+
+                MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+                headers.add("location", location.getPath());
+
+                responseEntity = new ResponseEntity<Client>(newClient, headers, HttpStatus.CREATED);
+            } else {
+                responseEntity = new ResponseEntity<Client>(HttpStatus.BAD_REQUEST);
             }
+
+        } catch (Exception e) {
+            log.error("Erro ao tentar cadastrar novo cliente.");
+            responseEntity = new ResponseEntity<Client>(HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<Client>(HttpStatus.NOT_IMPLEMENTED);
+        return responseEntity;
     }
 
     public ResponseEntity<Void> deleteById(@ApiParam(value = "Id do cliente", required = true) @PathVariable("id") Integer id) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        //todo: implementar
+        return null;
     }
 
     public ResponseEntity<Clients> find(@ApiParam(value = "Sobrenome do cliente") @Valid @RequestParam(value = "lastName", required = false) String lastName) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Clients>(objectMapper.readValue("{  \"bytes\": [],  \"empty\": true}", Clients.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Clients>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<Clients>(HttpStatus.NOT_IMPLEMENTED);
+        //todo: implementar
+        return null;
     }
 
     public ResponseEntity<Clients> findAll() {
@@ -108,45 +110,18 @@ public class ClientsApiController implements ClientsApi {
     }
 
     public ResponseEntity<Client> findById(@ApiParam(value = "Id do cliente", required = true) @PathVariable("id") Integer id) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Client>(objectMapper.readValue("{\"empty\": false}", Client.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Client>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<Client>(HttpStatus.NOT_IMPLEMENTED);
+        //todo: implementar
+        return null;
     }
 
     public ResponseEntity<Client> update(@ApiParam(value = "Id do cliente", required = true) @PathVariable("id") Integer id, @ApiParam(value = "", required = true) @Valid @RequestBody Client client) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Client>(objectMapper.readValue("{\"empty\": false}", Client.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Client>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<Client>(HttpStatus.NOT_IMPLEMENTED);
+        //todo: implementar
+        return null;
     }
 
     public ResponseEntity<Client> updateStatus(@ApiParam(value = "Id do cliente", required = true) @PathVariable("id") Integer id, @ApiParam(value = "Novo status do cliente", required = true, allowableValues = "\"active\", \"inactive\"") @PathVariable("status") String status) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Client>(objectMapper.readValue("{\"empty\": false}", Client.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Client>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<Client>(HttpStatus.NOT_IMPLEMENTED);
+        //todo: implementar
+        return null;
     }
 
 }
