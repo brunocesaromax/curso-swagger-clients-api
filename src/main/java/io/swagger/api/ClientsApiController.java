@@ -68,12 +68,12 @@ public class ClientsApiController implements ClientsApi {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
 
         if (requestAttributes instanceof ServletRequestAttributes) {
-            HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+            HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
             URI location;
 
-            if (request.getMethod().equals("PUT")) {
+            if (request.getMethod().equals("PUT")){
                 location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
-            } else {
+            }else {
                 location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
             }
 
@@ -155,8 +155,23 @@ public class ClientsApiController implements ClientsApi {
     }
 
     public ResponseEntity<Client> findById(@ApiParam(value = "Id do cliente", required = true) @PathVariable("id") Integer id) {
-        //todo: implementar
-        return null;
+        ResponseEntity<Client> responseEntity = null;
+
+        try {
+            Client client = clientDAO.findById(id);
+
+            if (client != null) {
+                responseEntity = new ResponseEntity<>(client, HttpStatus.OK);
+            }else {
+                responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+        } catch (Exception e) {
+            log.error("Erro ao tentar consultar cliente por id.");
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return responseEntity;
     }
 
     public ResponseEntity<Client> updateStatus(@ApiParam(value = "Id do cliente", required = true) @PathVariable("id") Integer id, @ApiParam(value = "Novo status do cliente", required = true, allowableValues = "\"active\", \"inactive\"") @PathVariable("status") String status) {
