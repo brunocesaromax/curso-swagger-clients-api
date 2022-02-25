@@ -68,12 +68,12 @@ public class ClientsApiController implements ClientsApi {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
 
         if (requestAttributes instanceof ServletRequestAttributes) {
-            HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
+            HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
             URI location;
 
-            if (request.getMethod().equals("PUT")){
+            if (request.getMethod().equals("PUT")) {
                 location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
-            }else {
+            } else {
                 location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
             }
 
@@ -115,24 +115,28 @@ public class ClientsApiController implements ClientsApi {
     }
 
     public ResponseEntity<Clients> find(@ApiParam(value = "Sobrenome do cliente") @Valid @RequestParam(value = "lastName", required = false) String lastName) {
-        //todo: implementar
-        return null;
+        ResponseEntity<Clients> responseEntity = null;
+
+        try {
+            Clients clients = clientDAO.findByLastName(lastName);
+
+            if (clients != null) {
+                if (clients.size() <= 0) {
+                    responseEntity = new ResponseEntity<>(clients, HttpStatus.NOT_FOUND);
+                } else {
+                    responseEntity = new ResponseEntity<>(clients, HttpStatus.OK);
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("Erro ao tentar consultar clientes por sobrenome.");
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return responseEntity;
     }
 
     public ResponseEntity<Clients> findAll() {
-        //Código gerado pelo próprio swagger editor
-//        String accept = request.getHeader("Accept");
-//        if (accept != null && accept.contains("application/json")) {
-//            try {
-//                return new ResponseEntity<Clients>(objectMapper.readValue("{  \"bytes\": [],  \"empty\": true}", Clients.class), HttpStatus.NOT_IMPLEMENTED);
-//            } catch (IOException e) {
-//                log.error("Couldn't serialize response for content type application/json", e);
-//                return new ResponseEntity<Clients>(HttpStatus.INTERNAL_SERVER_ERROR);
-//            }
-//        }
-//
-//        return new ResponseEntity<Clients>(HttpStatus.NOT_IMPLEMENTED);
-
         ResponseEntity<Clients> responseEntity = null;
 
         try {
@@ -162,7 +166,7 @@ public class ClientsApiController implements ClientsApi {
 
             if (client != null) {
                 responseEntity = new ResponseEntity<>(client, HttpStatus.OK);
-            }else {
+            } else {
                 responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 

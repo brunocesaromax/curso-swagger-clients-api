@@ -83,10 +83,14 @@ public class ClientDAO {
         return null;
     }
 
-    public List<Client> findByLastName(String lastName) {
-        return clients.stream()
-                .filter(c -> c.getLastName().contains(lastName))
-                .collect(Collectors.toList());
+    public Clients findByLastName(String lastName) {
+        Clients result = new Clients();
+
+        clients.stream()
+                .filter(c -> c.getLastName().toLowerCase().contains(lastName.toLowerCase()))
+                .forEach(result::add);
+
+        return result;
     }
 
     private Client mockInitial() {
