@@ -110,8 +110,23 @@ public class ClientsApiController implements ClientsApi {
     }
 
     public ResponseEntity<Void> deleteById(@ApiParam(value = "Id do cliente", required = true) @PathVariable("id") Integer id) {
-        //todo: implementar
-        return null;
+        ResponseEntity<Void> responseEntity = null;
+
+        try {
+            boolean isDeleted = clientDAO.delete(id);
+
+            if (isDeleted) {
+                responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }else {
+                responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+        } catch (Exception e) {
+            log.error("Erro ao tentar remover cliente por id.");
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return responseEntity;
     }
 
     public ResponseEntity<Clients> find(@ApiParam(value = "Sobrenome do cliente") @Valid @RequestParam(value = "lastName", required = false) String lastName) {

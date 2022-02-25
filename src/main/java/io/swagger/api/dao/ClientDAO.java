@@ -52,19 +52,7 @@ public class ClientDAO {
     }
 
     public boolean delete(Integer id) {
-        Integer idToRemove = null;
-
-        for (Client client : clients) {
-            if (client.getId().equals(id)) {
-                idToRemove = clients.indexOf(client);
-            }
-        }
-
-        if (idToRemove != null) {
-            return clients.remove(idToRemove);
-        }
-
-        return false;
+        return clients.removeIf(c -> c.getId().equals(id));
     }
 
     public Client findById(Integer id) {
