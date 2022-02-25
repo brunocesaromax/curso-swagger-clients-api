@@ -15,6 +15,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,19 +49,61 @@ public class ClientsApiController implements ClientsApi {
                     throw new RuntimeException("Erro ao tentar cadastrar novo cliente.");
                 }
 
-                URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newClient.getId()).toUri();
-
-                MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-                headers.add("location", location.getPath());
-
-                responseEntity = new ResponseEntity<Client>(newClient, headers, HttpStatus.CREATED);
+                MultiValueMap<String, String> headers = buildHeaderLocation(newClient.getId());
+                responseEntity = new ResponseEntity<>(newClient, headers, HttpStatus.CREATED);
             } else {
-                responseEntity = new ResponseEntity<Client>(HttpStatus.BAD_REQUEST);
+                responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
         } catch (Exception e) {
             log.error("Erro ao tentar cadastrar novo cliente.");
-            responseEntity = new ResponseEntity<Client>(HttpStatus.BAD_REQUEST);
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return responseEntity;
+    }
+
+    private MultiValueMap<String, String> buildHeaderLocation(Integer id) {
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+
+        if (requestAttributes instanceof ServletRequestAttributes) {
+            HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+            URI location;
+
+            if (request.getMethod().equals("PUT")) {
+                location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
+            } else {
+                location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
+            }
+
+            headers.add("location", location.getPath());
+        }
+
+        return headers;
+    }
+
+    public ResponseEntity<Client> update(@ApiParam(value = "Id do cliente", required = true) @PathVariable("id") Integer id,
+                                         @ApiParam(value = "", required = true) @Valid @RequestBody Client client) {
+        ResponseEntity<Client> responseEntity = null;
+
+        try {
+            if (client != null) {
+                Client updatedClient = clientDAO.update(id, client);
+
+                if (updatedClient == null) {
+                    throw new RuntimeException("Erro ao tentar atualizar cliente existente.");
+                }
+
+                MultiValueMap<String, String> headers = buildHeaderLocation(updatedClient.getId());
+                responseEntity = new ResponseEntity<>(updatedClient, headers, HttpStatus.OK);
+            } else {
+                responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+        } catch (Exception e) {
+            log.error("Erro ao tentar atualizar cliente existente.");
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return responseEntity;
@@ -95,26 +140,21 @@ public class ClientsApiController implements ClientsApi {
 
             if (clients != null) {
                 if (clients.size() <= 0) {
-                    responseEntity = new ResponseEntity<Clients>(clients, HttpStatus.NOT_FOUND);
+                    responseEntity = new ResponseEntity<>(clients, HttpStatus.NOT_FOUND);
                 } else {
-                    responseEntity = new ResponseEntity<Clients>(clients, HttpStatus.OK);
+                    responseEntity = new ResponseEntity<>(clients, HttpStatus.OK);
                 }
             }
 
         } catch (Exception e) {
             log.error("Erro ao tentar consultar clientes.");
-            responseEntity = new ResponseEntity<Clients>(HttpStatus.INTERNAL_SERVER_ERROR);
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return responseEntity;
     }
 
     public ResponseEntity<Client> findById(@ApiParam(value = "Id do cliente", required = true) @PathVariable("id") Integer id) {
-        //todo: implementar
-        return null;
-    }
-
-    public ResponseEntity<Client> update(@ApiParam(value = "Id do cliente", required = true) @PathVariable("id") Integer id, @ApiParam(value = "", required = true) @Valid @RequestBody Client client) {
         //todo: implementar
         return null;
     }

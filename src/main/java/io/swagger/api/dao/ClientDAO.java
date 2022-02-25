@@ -2,11 +2,12 @@ package io.swagger.api.dao;
 
 import io.swagger.model.Client;
 import io.swagger.model.Clients;
+import org.springframework.beans.BeanUtils;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,22 @@ public class ClientDAO {
         clients.add(client);
 
         return client;
+    }
+
+    public Client update(Integer id, Client client) {
+        Optional<Client> clientOptional = clients.stream().filter(c -> c.getId().equals(id)).findAny();
+
+        if (clientOptional.isPresent()) {
+            Client clientPersisted = clientOptional.get();
+
+            BeanUtils.copyProperties(client, clientPersisted, "id", "status");
+            clientPersisted.setLastUpdate(OffsetDateTime.now());
+            clients.set(clients.indexOf(clientPersisted), clientPersisted);
+
+            return clientPersisted;
+        }
+
+        return null;
     }
 
     public boolean delete(Integer id) {

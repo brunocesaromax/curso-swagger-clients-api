@@ -247,19 +247,12 @@ public class Client   {
       return false;
     }
     Client client = (Client) o;
-    return Objects.equals(this.id, client.id) &&
-        Objects.equals(this.name, client.name) &&
-        Objects.equals(this.lastName, client.lastName) &&
-        Objects.equals(this.initials, client.initials) &&
-        Objects.equals(this.birthDate, client.birthDate) &&
-        Objects.equals(this.lastUpdate, client.lastUpdate) &&
-        Objects.equals(this.status, client.status) &&
-        Objects.equals(this.type, client.type);
+    return Objects.equals(this.id, client.id);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, lastName, initials, birthDate, lastUpdate, status, type);
+    return Objects.hash(id);
   }
 
   @Override
