@@ -241,6 +241,8 @@ paths:
       responses:
         200:
           description: "Sucesso ao recuperar o readme da API."
+          schema:
+            type: "string"
         500:
           description: "Erro interno ao tentar recuperar o readme da API."
   
