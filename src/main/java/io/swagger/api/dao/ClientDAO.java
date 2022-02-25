@@ -6,10 +6,8 @@ import org.springframework.beans.BeanUtils;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 // Classe substituta do BD
 public class ClientDAO {
@@ -108,7 +106,7 @@ public class ClientDAO {
     }
 
     private Integer generateId() {
-        Double random = Math.random() * 112;
-        return new Random().nextInt(random.intValue()) + 132;
+        double random = Math.random() * 112;
+        return new Random().nextInt((int) random) + 132;
     }
 }

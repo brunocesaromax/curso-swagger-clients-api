@@ -21,14 +21,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/clients-api/v1")
 public interface ReadmeApi {
 
-    @ApiOperation(value = "Recupera readme da API", nickname = "readme", notes = "Esta operação retorna o readme da API.", tags={ "API", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Sucesso ao recuperar o readme da API."),
-        @ApiResponse(code = 500, message = "Erro interno ao tentar recuperar o readme da API.") })
+    @ApiOperation(value = "Recupera readme da API", nickname = "readme", notes = "Esta operação retorna o readme da API.", tags = {"API",})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Sucesso ao recuperar o readme da API."),
+            @ApiResponse(code = 500, message = "Erro interno ao tentar recuperar o readme da API.")})
     @RequestMapping(value = "/readme",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
-        method = RequestMethod.GET)
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
     ResponseEntity<String> readme();
 
 }

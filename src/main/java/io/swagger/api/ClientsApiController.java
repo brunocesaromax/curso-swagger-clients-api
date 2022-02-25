@@ -117,7 +117,7 @@ public class ClientsApiController implements ClientsApi {
 
             if (isDeleted) {
                 responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }else {
+            } else {
                 responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
