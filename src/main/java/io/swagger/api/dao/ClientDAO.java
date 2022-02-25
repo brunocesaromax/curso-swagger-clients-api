@@ -81,6 +81,18 @@ public class ClientDAO {
         return result;
     }
 
+    public Client updateStatus(Integer id, String status) {
+        Client clientPersisted = findById(id);
+
+        if (clientPersisted != null) {
+            clientPersisted.setStatus(status.equalsIgnoreCase("active"));
+            clientPersisted.setLastUpdate(OffsetDateTime.now());
+            clients.set(clients.indexOf(clientPersisted), clientPersisted);
+        }
+
+        return clientPersisted;
+    }
+
     private Client mockInitial() {
         Client client = new Client();
         client.setId(125);

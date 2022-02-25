@@ -194,8 +194,23 @@ public class ClientsApiController implements ClientsApi {
     }
 
     public ResponseEntity<Client> updateStatus(@ApiParam(value = "Id do cliente", required = true) @PathVariable("id") Integer id, @ApiParam(value = "Novo status do cliente", required = true, allowableValues = "\"active\", \"inactive\"") @PathVariable("status") String status) {
-        //todo: implementar
-        return null;
+        ResponseEntity<Client> responseEntity = null;
+
+        try {
+            Client updatedClient = clientDAO.updateStatus(id, status);
+
+            if (updatedClient != null) {
+                responseEntity = new ResponseEntity<>(updatedClient, HttpStatus.OK);
+            } else {
+                responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+        } catch (Exception e) {
+            log.error("Erro ao tentar atualizar status de cliente");
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return responseEntity;
     }
 
 }
