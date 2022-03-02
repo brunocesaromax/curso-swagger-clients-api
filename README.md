@@ -3,7 +3,7 @@
 
 # Sobre o projeto
 
-https://curso-swagger-clients-api.heroku.com
+https://curso-swagger-clients-api.herokuapp.com
 
 Aplicação usando os frameworks Spring Boot + Swagger.   
 A aplicação consiste em um CRUD simples para clientes.   
